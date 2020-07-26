@@ -1,0 +1,78 @@
+public interface Expression {
+    public int interpret(InterpreterEngine engine);
+}
+public class InterpreterEngine {
+    public int add(String input) {
+        String[] tokens = interpret(input);
+        int num1 = Integer.parseInt(tokens[0]);
+        int num2 = Integer.parseInt(tokens[1]);
+        return (num1+num2);
+    }
+    
+    public int multiply(String input) {
+        String[] tokens = interpret(input);
+        int num1 = Integer.parseInt(tokens[0]);
+        int num2 = Integer.parseInt(tokens[1]);
+        return (num1*num2);
+    }
+     
+    private String[] interpret(String input) {
+        String string = input.replaceAll("[^0-9]", " ");
+        string = string.replaceAll("( )+", " ").trim();
+        String[] tokens = string.split(" ");
+        return tokens;
+    }
+}
+public class AddExpression implements Expression {
+    private String expression;
+    
+    public AddExpression(String expression) {
+        this.expression = expression;
+    }
+    
+    @Override
+    public int interpret(InterpreterEngine engine) {
+        return engine.add(expression);
+    }
+}
+
+public class MultiplyExpression implements Expression {
+    private String expression;
+    
+    public MultiplyExpression(String expression) {
+        this.expression = expression;
+    }
+
+    @Override
+    public int interpret(InterpreterEngine engine) {
+        return engine.multiply(expression);
+    }
+}
+public class Main {
+    private InterpreterEngine engine;
+    
+    public Main(InterpreterEngine engine) {
+        this.engine = engine;
+    }
+    
+    public int interpret(String input) {
+        Expression expression = null;
+        
+        if(input.contains("add")) {
+            expression = new AddExpression(input);
+        } else if(input.contains("multiply")) {
+            expression = new MultiplyExpression(input);
+        }
+        
+        int result = expression.interpret(engine);
+        System.out.println(input);
+        return result;
+    }
+    
+    public static void main(String[] args) {
+        Main main = new Main(new InterpreterEngine());
+        
+        System.out.println("Result: " + main .interpret("add 15 and 25"));
+        System.out.println("Result: " + main .interpret("multiply " + main .interpret("add 5 and 5") + " and 10"));
+    }
+}
